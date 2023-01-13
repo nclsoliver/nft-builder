@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
+//v0.6.6+commit.6c089d02
 
 import "@openzeppelin/contracts@4.8.0/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts@4.8.0/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -9,7 +10,7 @@ import "@openzeppelin/contracts@4.8.0/utils/Counters.sol";
 
 contract Web3Builders is ERC721, ERC721Enumerable, Pausable, Ownable {
     using Counters for Counters.Counter;
-    uint256 maxSupply =2000;
+    uint256 maxSupply = 2000;
     bool public publicMintOpen = false;
     bool public allowListMintOpen = false;
     mapping(address => bool) public allowList;
@@ -30,10 +31,10 @@ contract Web3Builders is ERC721, ERC721Enumerable, Pausable, Ownable {
         _unpause();
     }
 
-    function editMintWindows(
-        bool _publicMintOpen,
-        bool _allowListMintOpen
-    ) external onlyOwner {
+    function editMintWindows(bool _publicMintOpen, bool _allowListMintOpen)
+        external
+        onlyOwner
+    {
         publicMintOpen = _publicMintOpen;
         allowListMintOpen = _allowListMintOpen;
     }
@@ -49,7 +50,7 @@ contract Web3Builders is ERC721, ERC721Enumerable, Pausable, Ownable {
     //add Payment
     //add limiting of supply
     function publicMint() public payable {
-        require(publicMintOpen,"Public Mint Closed");        
+        require(publicMintOpen, "Public Mint Closed");
         require(msg.value == 0.01 ether, "Not Enough Funds");
         internalMint();
     }
@@ -59,7 +60,6 @@ contract Web3Builders is ERC721, ERC721Enumerable, Pausable, Ownable {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(msg.sender, tokenId);
-
     }
 
     function withdraw(address _addr) external onlyOwner {
@@ -70,16 +70,17 @@ contract Web3Builders is ERC721, ERC721Enumerable, Pausable, Ownable {
 
     //populate the allow list
     function setAllowList(address[] calldata addresses) external onlyOwner {
-        for(uint256 i = 0; i < addresses.length; i++){
+        for (uint256 i = 0; i < addresses.length; i++) {
             allowList[addresses[i]] = true;
         }
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
-        internal
-        whenNotPaused
-        override(ERC721, ERC721Enumerable)
-    {
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId,
+        uint256 batchSize
+    ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
